@@ -44,6 +44,8 @@ defmodule Bamboo.SparkpostAdapter.Mixfile do
   defp deps do
     [
       {:bamboo, "~> 0.4"},
+      {:ex_doc, "~> 0.9", only: :dev},
+      {:earmark, ">= 0.0.0", only: :dev},
       {:cowboy, "~> 1.0", only: [:test, :dev]},
     ]
   end

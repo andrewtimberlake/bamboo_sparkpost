@@ -9,13 +9,13 @@ defmodule Bamboo.SparkpostHelper do
   Put extra message parameters that are used by Sparkpost
 
   Parameters set with this function are sent to Sparkpost when used along with
-  the Bamboo.SparkpostAdapter. You can set things like `important`, `merge_vars`,
-  and whatever else you need that the Sparkpost API supports.
+  the Bamboo.SparkpostAdapter. You can set any additional parameters that the Sparkpost API supports
+  Other functions in this module provide a more convenient way of setting these parameters.
 
   ## Example
 
       email
-      |> put_param([:options, :open_tracking], true)
+      |> put_param([:options, :open_tracking], false)
       |> put_param(:tags, ["foo", "bar"])
       |> put_param(:meta_data, %{foo: "bar"})
   """
@@ -46,9 +46,9 @@ defmodule Bamboo.SparkpostHelper do
 
   ## Example
 
-     email
-     |> meta_data(foo: bar)
-     |> meta_data(%{bar: "baz")
+      email
+      |> meta_data(foo: bar)
+      |> meta_data(%{bar: "baz")
   """
   def meta_data(email, map) when is_map(map) do
     put_param(email, :metadata, map)
