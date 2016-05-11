@@ -1,16 +1,16 @@
-defmodule Bamboo.SparkpostAdapter do
+defmodule Bamboo.SparkPostAdapter do
   @moduledoc """
-  Sends email using Sparkpost's JSON API.
+  Sends email using SparkPost's JSON API.
 
-  Use this adapter to send emails through Sparkpost's API. Requires that an API
-  key is set in the config. See `Bamboo.SparkpostHelper` for extra functions that
-  can be used by `Bamboo.SparkpostAdapter` (tagging, merge vars, etc.)
+  Use this adapter to send emails through SparkPost's API. Requires that an API
+  key is set in the config. See `Bamboo.SparkPostHelper` for extra functions that
+  can be used by `Bamboo.SparkPostAdapter` (tagging, merge vars, etc.)
 
   ## Example config
 
       # In config/config.exs, or config/prod.exs, etc.
       config :my_app, MyApp.Mailer,
-        adapter: Bamboo.SparkpostAdapter,
+        adapter: Bamboo.SparkPostAdapter,
         api_key: "my_api_key"
 
       # Define a Mailer. Maybe in lib/my_app/mailer.ex
@@ -30,7 +30,7 @@ defmodule Bamboo.SparkpostAdapter do
       filtered_params = params |> Poison.decode! |> Map.put("key", "[FILTERED]")
 
       message = """
-      There was a problem sending the email through the Sparkpost API.
+      There was a problem sending the email through the SparkPost API.
 
       Here is the response:
 
@@ -73,7 +73,7 @@ defmodule Bamboo.SparkpostAdapter do
 
   defp raise_api_key_error(config) do
     raise ArgumentError, """
-    There was no API key set for the Sparkpost adapter.
+    There was no API key set for the SparkPost adapter.
 
     * Here are the config options that were passed in:
 

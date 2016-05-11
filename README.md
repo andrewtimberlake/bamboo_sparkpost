@@ -1,4 +1,4 @@
-# Bamboo.SparkpostAdapter
+# Bamboo.SparkPostAdapter
 
 An Adapter for the [Bamboo](https://github.com/thoughtbot/bamboo) email app.
 
@@ -26,22 +26,22 @@ The package can be installed as:
           Bamboo.TaskSupervisorStrategy.child_spec
         ]
 
-  4. Add your Sparkpost API key to your config
+  4. Add your SparkPost API key to your config
 
         # In your config/config.exs file
         config :my_app, MyApp.Mailer,
-          adapter: Bamboo.SparkpostAdapter
+          adapter: Bamboo.SparkPostAdapter
           api_key: "my-api-key"
 
   5. Follow Bamboo [Getting Started Guide](https://github.com/thoughtbot/bamboo#getting-started)
 
 ## Advanced Usage
 
-The Sparkpost adapter provides a helper module for setting tags and other meta data
+The SparkPost adapter provides a helper module for setting tags and other meta data
 
 ### Examples
 
-    include Bamboo.SparkpostHelper
+    include Bamboo.SparkPostHelper
 
     email
     |> tag("my-tag")

@@ -1,13 +1,13 @@
-defmodule Bamboo.SparkpostAdapterTest do
+defmodule Bamboo.SparkPostAdapterTest do
   use ExUnit.Case
   alias Bamboo.Email
-  alias Bamboo.SparkpostAdapter
-  alias Bamboo.SparkpostHelper
+  alias Bamboo.SparkPostAdapter
+  alias Bamboo.SparkPostHelper
 
-  @config %{adapter: SparkpostAdapter, api_key: "123_abc"}
-  @config_with_bad_key %{adapter: SparkpostAdapter, api_key: nil}
+  @config %{adapter: SparkPostAdapter, api_key: "123_abc"}
+  @config_with_bad_key %{adapter: SparkPostAdapter, api_key: nil}
 
-  defmodule FakeSparkpost do
+  defmodule FakeSparkPost do
     use Plug.Router
 
     plug Plug.Parsers,
@@ -52,10 +52,10 @@ defmodule Bamboo.SparkpostAdapterTest do
   end
 
   setup do
-    FakeSparkpost.start_server(self)
+    FakeSparkPost.start_server(self)
 
     on_exit fn ->
-      FakeSparkpost.shutdown
+      FakeSparkPost.shutdown
     end
 
     :ok
@@ -63,16 +63,16 @@ defmodule Bamboo.SparkpostAdapterTest do
 
   test "raises if the api key is nil" do
     assert_raise ArgumentError, ~r/no API key set/, fn ->
-      new_email(from: "foo@bar.com") |> SparkpostAdapter.deliver(@config_with_bad_key)
+      new_email(from: "foo@bar.com") |> SparkPostAdapter.deliver(@config_with_bad_key)
     end
 
     assert_raise ArgumentError, ~r/no API key set/, fn ->
-      SparkpostAdapter.handle_config(%{})
+      SparkPostAdapter.handle_config(%{})
     end
   end
 
   test "deliver/2 sends the to the right url" do
-    new_email |> SparkpostAdapter.deliver(@config)
+    new_email |> SparkPostAdapter.deliver(@config)
 
     assert_receive {:fake_sparkpost, %{request_path: request_path}}
 
@@ -88,7 +88,7 @@ defmodule Bamboo.SparkpostAdapterTest do
     )
     |> Email.put_header("Reply-To", "reply@foo.com")
 
-    email |> SparkpostAdapter.deliver(@config)
+    email |> SparkPostAdapter.deliver(@config)
 
     assert_receive {:fake_sparkpost, %{params: params}=conn}
     assert Plug.Conn.get_req_header(conn, "content-type") == ["application/json"]
@@ -111,7 +111,7 @@ defmodule Bamboo.SparkpostAdapterTest do
       bcc: [{"BCC", "bcc@bar.com"}],
     )
 
-    email |> SparkpostAdapter.deliver(@config)
+    email |> SparkPostAdapter.deliver(@config)
 
     assert_receive {:fake_sparkpost, %{params: %{"recipients" => recipients, "content" => %{"headers" => headers}}}}
     assert recipients == [
@@ -123,9 +123,9 @@ defmodule Bamboo.SparkpostAdapterTest do
   end
 
   test "deliver/2 adds extra params to the message " do
-    email = new_email |> SparkpostHelper.mark_transactional
+    email = new_email |> SparkPostHelper.mark_transactional
 
-    email |> SparkpostAdapter.deliver(@config)
+    email |> SparkPostAdapter.deliver(@config)
 
     assert_receive {:fake_sparkpost, %{params: params}}
     assert params["options"] == %{"transactional" => true}
@@ -134,16 +134,16 @@ defmodule Bamboo.SparkpostAdapterTest do
   test "raises if the response is not a success" do
     email = new_email(from: "INVALID_EMAIL")
 
-    assert_raise Bamboo.SparkpostAdapter.ApiError, fn ->
-      email |> SparkpostAdapter.deliver(@config)
+    assert_raise Bamboo.SparkPostAdapter.ApiError, fn ->
+      email |> SparkPostAdapter.deliver(@config)
     end
   end
 
   test "removes api key from error output" do
     email = new_email(from: "INVALID_EMAIL")
 
-    assert_raise Bamboo.SparkpostAdapter.ApiError, ~r/"key" => "\[FILTERED\]"/, fn ->
-      email |> SparkpostAdapter.deliver(@config)
+    assert_raise Bamboo.SparkPostAdapter.ApiError, ~r/"key" => "\[FILTERED\]"/, fn ->
+      email |> SparkPostAdapter.deliver(@config)
     end
   end
 

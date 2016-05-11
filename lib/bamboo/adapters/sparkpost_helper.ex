@@ -1,15 +1,15 @@
-defmodule Bamboo.SparkpostHelper do
+defmodule Bamboo.SparkPostHelper do
   @moduledoc """
-  Functions for using features specific to Sparkpost e.g. tagging
+  Functions for using features specific to SparkPost e.g. tagging
   """
 
   alias Bamboo.Email
 
   @doc """
-  Put extra message parameters that are used by Sparkpost
+  Put extra message parameters that are used by SparkPost
 
-  Parameters set with this function are sent to Sparkpost when used along with
-  the Bamboo.SparkpostAdapter. You can set any additional parameters that the Sparkpost API supports
+  Parameters set with this function are sent to SparkPost when used along with
+  the Bamboo.SparkPostAdapter. You can set any additional parameters that the SparkPost API supports
   Other functions in this module provide a more convenient way of setting these parameters.
 
   ## Example
@@ -68,7 +68,7 @@ defmodule Bamboo.SparkpostHelper do
   end
 
   @doc ~S"""
-  Disable open tracking (Sparkpost defaults to true)
+  Disable open tracking (SparkPost defaults to true)
 
   ## Example
       email |> disable_open_tracking

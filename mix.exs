@@ -1,4 +1,4 @@
-defmodule Bamboo.SparkpostAdapter.Mixfile do
+defmodule Bamboo.SparkPostAdapter.Mixfile do
   use Mix.Project
 
   @project_url "https://github.com/andrewtimberlake/bamboo_sparkpost"
@@ -9,8 +9,8 @@ defmodule Bamboo.SparkpostAdapter.Mixfile do
      elixir: "~> 1.2",
      source_url: @project_url,
      homepage_url: @project_url,
-     name: "Bamboo Sparkpost Adapter",
-     description: "A Bamboo adapter for the Sparkpost email service",
+     name: "Bamboo SparkPost Adapter",
+     description: "A Bamboo adapter for the SparkPost email service",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      package: package,
