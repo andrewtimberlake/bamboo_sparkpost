@@ -9,7 +9,7 @@ The package can be installed as:
   1. Add bamboo_sparkpost to your list of dependencies in `mix.exs`:
 
         def deps do
-          [{:bamboo_sparkpost, "~> 0.0.1"}]
+          [{:bamboo_sparkpost, "~> 0.5.0"}]
         end
 
   2. Ensure bamboo is started before your application:
