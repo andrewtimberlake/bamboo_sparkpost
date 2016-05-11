@@ -93,6 +93,7 @@ defmodule Bamboo.SparkPostAdapter do
         html: email.html_body,
         reply_to: extract_reply_to(email),
         headers: drop_reply_to(email_headers(email)),
+        attachments: attachments(email)
       },
       recipients: recipients(email),
     }
@@ -160,6 +161,18 @@ defmodule Bamboo.SparkPostAdapter do
 
   defp headers(api_key) do
     %{"content-type" => "application/json", "authorization" => api_key}
+  end
+
+  defp attachments(%{attachments: attachments}) do
+    attachments
+    |> Enum.reverse
+    |> Enum.map(fn(att) ->
+      %{
+        name: att.filename,
+        type: att.content_type,
+        data: Base.encode64(File.read!(att.path))
+      }
+    end)
   end
 
   defp request!(path, params, api_key) do
