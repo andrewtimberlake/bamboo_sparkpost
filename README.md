@@ -18,22 +18,14 @@ The package can be installed as:
           [applications: [:bamboo]]
         end
 
-  3. Add the `Bamboo.TaskSupervisor` as a child to your supervisor. This is necessary for `deliver_later` to work.
-
-        # Usually in lib/my_app_name.ex
-        children = [
-          # This is where you add the supervisor that handles deliver_later calls
-          Bamboo.TaskSupervisorStrategy.child_spec
-        ]
-
-  4. Add your SparkPost API key to your config
+  3. Add your SparkPost API key to your config
 
         # In your config/config.exs file
         config :my_app, MyApp.Mailer,
           adapter: Bamboo.SparkPostAdapter
           api_key: "my-api-key"
 
-  5. Follow Bamboo [Getting Started Guide](https://github.com/thoughtbot/bamboo#getting-started)
+  4. Follow Bamboo [Getting Started Guide](https://github.com/thoughtbot/bamboo#getting-started)
 
 ## Advanced Usage
 
