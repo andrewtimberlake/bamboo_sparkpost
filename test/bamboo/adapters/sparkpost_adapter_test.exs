@@ -131,6 +131,15 @@ defmodule Bamboo.SparkPostAdapterTest do
     assert params["options"] == %{"transactional" => true}
   end
 
+  test "deliver/2 adds tags to the recipients" do
+    email = new_email(to: ["foo@example.com", "bar@example.com"]) |> SparkPostHelper.tag("test-tag")
+
+    email |> SparkPostAdapter.deliver(@config)
+
+    assert_receive {:fake_sparkpost, %{params: params}}
+    assert params["recipients"] == [%{"address" => %{"email" => "foo@example.com", "name" => nil}, "tags" => ["test-tag"]}, %{"address" => %{"email" => "bar@example.com", "name" => nil}, "tags" => ["test-tag"]}]
+  end
+
   test "raises if the response is not a success" do
     email = new_email(from: "INVALID_EMAIL")
 

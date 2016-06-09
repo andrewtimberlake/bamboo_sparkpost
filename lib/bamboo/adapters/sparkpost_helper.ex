@@ -38,7 +38,9 @@ defmodule Bamboo.SparkPostHelper do
       tag(email, ["welcome-email", "marketing"])
   """
   def tag(email, tags) do
-    put_param(email, :tags, List.wrap(tags))
+    existing_tags = email.private[:tags] || []
+    new_tags = existing_tags ++ List.wrap(tags)
+    Email.put_private(email, :tags, new_tags)
   end
 
   @doc ~S"""

@@ -97,6 +97,7 @@ defmodule Bamboo.SparkPostAdapter do
       recipients: recipients(email),
     }
     |> add_message_params(email)
+    |> add_tags(email)
   end
 
   defp email_headers(email) do
@@ -121,6 +122,15 @@ defmodule Bamboo.SparkPostAdapter do
     end)
   end
   defp add_message_params(sparkpost_message, _), do: sparkpost_message
+
+  defp add_tags(sparkpost_message, %{private: %{tags: tags}}) do
+    new_recipients = Enum.reduce(sparkpost_message.recipients, [], fn(rcpt, acc) ->
+      rcpt = Map.put_new(rcpt, :tags, tags)
+      [rcpt | acc]
+    end)
+    %{sparkpost_message | recipients: Enum.reverse(new_recipients)}
+  end
+  defp add_tags(sparkpost_message, _), do: sparkpost_message
 
   defp recipients(email) do
     []

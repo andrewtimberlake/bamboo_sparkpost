@@ -5,13 +5,13 @@ defmodule Bamboo.SparkPostHelperTest do
 
   test "adds tags to sparkpost emails" do
     email = new_email |> SparkPostHelper.tag("welcome-email")
-    assert email.private.message_params == %{tags: ["welcome-email"]}
+    assert email.private.tags == ["welcome-email"]
 
     email = new_email |> SparkPostHelper.tag(["welcome-email", "awesome"])
-    assert email.private.message_params == %{tags: ["welcome-email", "awesome"]}
+    assert email.private.tags == ["welcome-email", "awesome"]
 
     email = new_email |> SparkPostHelper.tag(["welcome-email"]) |> SparkPostHelper.tag(["awesome"]) |> SparkPostHelper.tag("another")
-    assert email.private.message_params == %{tags: ["welcome-email", "awesome", "another"]}
+    assert email.private.tags == ["welcome-email", "awesome", "another"]
   end
 
   test "it marks the email as transactional" do
@@ -50,9 +50,11 @@ defmodule Bamboo.SparkPostHelperTest do
     |> SparkPostHelper.tag(["foo", "bar"])
     |> SparkPostHelper.meta_data(foo: "bar")
 
-    assert email.private.message_params == %{
-      options: %{open_tracking: false, transactional: true, click_tracking: false},
-      metadata: %{foo: "bar"},
+    assert email.private == %{
+      message_params: %{
+        options: %{open_tracking: false, transactional: true, click_tracking: false},
+        metadata: %{foo: "bar"}
+      },
       tags: ["foo", "bar"]
     }
   end
