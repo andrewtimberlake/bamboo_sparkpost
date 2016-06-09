@@ -2,10 +2,11 @@ defmodule Bamboo.SparkPostAdapter.Mixfile do
   use Mix.Project
 
   @project_url "https://github.com/andrewtimberlake/bamboo_sparkpost"
+  @version "0.5.1"
 
   def project do
     [app: :bamboo_sparkpost,
-     version: "0.5.1",
+     version: @version,
      elixir: "~> 1.2",
      source_url: @project_url,
      homepage_url: @project_url,
@@ -14,7 +15,16 @@ defmodule Bamboo.SparkPostAdapter.Mixfile do
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      package: package,
-     deps: deps]
+     deps: deps,
+     docs: fn ->
+       [source_ref: "v#{@version}",
+        canonical: "http://hexdocs.pm/bamboo_sparkpost",
+        main: "Bamboo Sparkpost Adapter",
+        source_url: @project_url,
+        extras: ["README.md", "CHANGELOG.md"]
+       ]
+     end,
+    ]
   end
 
   # Configuration for the OTP application
@@ -43,7 +53,7 @@ defmodule Bamboo.SparkPostAdapter.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:bamboo, "~> 0.5"},
+      {:bamboo, github: "andrewtimberlake/bamboo", branch: "feature/attachments"},
       {:ex_doc, "~> 0.9", only: :dev},
       {:earmark, ">= 0.0.0", only: :dev},
       {:cowboy, "~> 1.0", only: [:test, :dev]},
