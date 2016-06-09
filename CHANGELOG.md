@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.5.1
+
+* Fixed SparkPost tag handling
+
 ## 0.5.0
 
 * Updated dependency to Bamboo 0.5.0

@@ -5,7 +5,7 @@ defmodule Bamboo.SparkPostAdapter.Mixfile do
 
   def project do
     [app: :bamboo_sparkpost,
-     version: "0.5.0",
+     version: "0.5.1",
      elixir: "~> 1.2",
      source_url: @project_url,
      homepage_url: @project_url,
