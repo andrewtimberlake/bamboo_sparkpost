@@ -167,10 +167,14 @@ defmodule Bamboo.SparkPostAdapter do
     attachments
     |> Enum.reverse
     |> Enum.map(fn(att) ->
+      data = case att.path do
+               {:binary, data} -> data
+               path -> File.read!(att.path)
+             end
       %{
         name: att.filename,
         type: att.content_type,
-        data: Base.encode64(File.read!(att.path))
+        data: Base.encode64(data)
       }
     end)
   end
