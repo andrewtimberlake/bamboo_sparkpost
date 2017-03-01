@@ -112,6 +112,29 @@ defmodule Bamboo.SparkPostAdapterTest do
     ]
   end
 
+  test "deliver/2 handles binary attachments" do
+    email = new_email(
+      from: {"From", "from@foo.com"},
+      subject: "My Subject",
+      text_body: "TEXT BODY",
+      html_body: "HTML BODY",
+    )
+    |> Email.put_attachment({:binary, File.read!(Path.join(__DIR__, "../../support/attachment.txt"))}, filename: "test.txt", content_type: "text/plain")
+
+    email |> SparkPostAdapter.deliver(@config)
+
+    assert_receive {:fake_sparkpost, %{params: params}=conn}
+
+    message = params["content"]
+    assert message["attachments"] == [
+      %{
+        "type" => "text/plain",
+        "name" => "test.txt",
+        "data" => "VGVzdCBBdHRhY2htZW50Cg=="
+      }
+    ]
+  end
+
   test "deliver/2 correctly formats recipients" do
     email = new_email(
       to: [{"To", "to@bar.com"}],
