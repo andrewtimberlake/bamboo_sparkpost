@@ -163,7 +163,7 @@ defmodule Bamboo.SparkPostAdapter do
   end
 
   defp request!(path, params, api_key) do
-    HTTPoison.post!("#{base_uri}/#{path}", params, headers(api_key))
+    HTTPoison.post!("#{base_uri}#{path}", params, headers(api_key))
   end
 
   defp base_uri do
