@@ -19,8 +19,8 @@ defmodule Bamboo.SparkPostAdapter do
       end
   """
 
-  @default_base_uri "https://api.sparkpost.com/"
-  @send_message_path "api/v1/transmissions"
+  @default_base_uri "https://api.sparkpost.com"
+  @send_message_path "/api/v1/transmissions"
   @behaviour Bamboo.Adapter
 
   defmodule ApiError do
@@ -167,6 +167,7 @@ defmodule Bamboo.SparkPostAdapter do
   end
 
   defp base_uri do
-    Application.get_env(:bamboo, :sparkpost_base_uri) || @default_base_uri
+    uri = Application.get_env(:bamboo, :sparkpost_base_uri) || @default_base_uri
+    String.replace_trailing(uri, "/", "")
   end
 end

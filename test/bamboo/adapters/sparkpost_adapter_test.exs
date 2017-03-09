@@ -22,7 +22,7 @@ defmodule Bamboo.SparkPostAdapterTest do
       Agent.update(__MODULE__, &HashDict.put(&1, :parent, parent))
       port = get_free_port
 
-      Application.put_env(:bamboo, :sparkpost_base_uri, "http://localhost:#{port}")
+      Application.put_env(:bamboo, :sparkpost_base_uri, "http://localhost:#{port}/")
       Plug.Adapters.Cowboy.http __MODULE__, [], port: port, ref: __MODULE__
     end
 
