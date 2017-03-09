@@ -123,7 +123,7 @@ defmodule Bamboo.SparkPostAdapterTest do
 
     email |> SparkPostAdapter.deliver(@config)
 
-    assert_receive {:fake_sparkpost, %{params: params}=conn}
+    assert_receive {:fake_sparkpost, %{params: params}}
 
     message = params["content"]
     assert message["attachments"] == [

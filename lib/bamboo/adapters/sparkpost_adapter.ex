@@ -171,7 +171,7 @@ defmodule Bamboo.SparkPostAdapter do
     |> Enum.map(fn(att) ->
       data = case att.path do
                {:binary, data} -> data
-               path -> File.read!(att.path)
+               _ -> File.read!(att.path)
              end
       %{
         name: att.filename,
