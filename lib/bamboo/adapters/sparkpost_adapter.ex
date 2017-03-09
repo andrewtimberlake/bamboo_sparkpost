@@ -49,8 +49,10 @@ defmodule Bamboo.SparkPostAdapter do
     api_key = get_key(config)
     params = email |> convert_to_sparkpost_params |> Poison.encode!
     case request!(@send_message_path, params, api_key) do
-      %{status_code: status} = response when status > 299 ->
+      {:ok, status, _headers, response} when status > 299 ->
         raise(ApiError, %{params: params, response: response})
+      {:error, reason} ->
+        raise(ApiError, %{message: inspect(reason)})
       response -> response
     end
   end
@@ -160,7 +162,7 @@ defmodule Bamboo.SparkPostAdapter do
   end
 
   defp headers(api_key) do
-    %{"content-type" => "application/json", "authorization" => api_key}
+    [{"content-type", "application/json"}, {"authorization", api_key}]
   end
 
   defp attachments(%{attachments: attachments}) do
@@ -169,7 +171,7 @@ defmodule Bamboo.SparkPostAdapter do
     |> Enum.map(fn(att) ->
       data = case att.path do
                {:binary, data} -> data
-               path -> File.read!(att.path)
+               _ -> File.read!(att.path)
              end
       %{
         name: att.filename,
@@ -180,7 +182,8 @@ defmodule Bamboo.SparkPostAdapter do
   end
 
   defp request!(path, params, api_key) do
-    HTTPoison.post!("#{base_uri}#{path}", params, headers(api_key))
+    uri = base_uri() <> path
+    :hackney.post(uri, headers(api_key), params, [:with_body])
   end
 
   defp base_uri do

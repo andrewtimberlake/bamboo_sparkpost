@@ -1,4 +1,4 @@
-%{"bamboo": {:git, "https://github.com/andrewtimberlake/bamboo.git", "af6bb1323fa38f7f1c498547a0c05d0a9f6b8924", [branch: "feature/attachments"]},
+%{"bamboo": {:git, "https://github.com/andrewtimberlake/bamboo.git", "f4f81d5c875a7178dd8ea00cc0bffe9449baff84", [branch: "feature/attachments"]},
   "certifi": {:hex, :certifi, "0.4.0", "a7966efb868b179023618d29a407548f70c52466bf1849b9e8ebd0e34b7ea11f", [:rebar3], []},
   "cowboy": {:hex, :cowboy, "1.0.4", "a324a8df9f2316c833a470d918aaf73ae894278b8aa6226ce7a9bf699388f878", [:rebar, :make], [{:cowlib, "~> 1.0.0", [hex: :cowlib, optional: false]}, {:ranch, "~> 1.0", [hex: :ranch, optional: false]}]},
   "cowlib": {:hex, :cowlib, "1.0.2", "9d769a1d062c9c3ac753096f868ca121e2730b9a377de23dec0f7e08b1df84ee", [:make], []},
