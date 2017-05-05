@@ -65,6 +65,9 @@ defmodule Bamboo.SparkPostAdapter do
       config
     end
   end
+  
+  @doc false
+  def supports_attachments?, do: true
 
   defp get_key(config) do
     case Map.get(config, :api_key) do
