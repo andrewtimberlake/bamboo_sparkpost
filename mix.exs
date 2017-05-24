@@ -24,6 +24,8 @@ defmodule Bamboo.SparkPostAdapter.Mixfile do
         extras: ["README.md", "CHANGELOG.md"]
        ]
      end,
+     test_coverage: [tool: ExCoveralls],
+     preferred_cli_env: ["coveralls": :test, "coveralls.detail": :test, "coveralls.post": :test]
     ]
   end
 
@@ -42,21 +44,14 @@ defmodule Bamboo.SparkPostAdapter.Mixfile do
     ]
   end
 
-  # Dependencies can be Hex packages:
-  #
-  #   {:mydep, "~> 0.3.0"}
-  #
-  # Or git/path repositories:
-  #
-  #   {:mydep, git: "https://github.com/elixir-lang/mydep.git", tag: "0.1.0"}
-  #
-  # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:bamboo, github: "andrewtimberlake/bamboo", branch: "feature/attachments"},
-      {:ex_doc, "~> 0.9", only: :dev},
-      {:earmark, ">= 0.0.0", only: :dev},
+      {:bamboo, "~> 0.8"},
       {:cowboy, "~> 1.0", only: [:test, :dev]},
+      {:earmark, ">= 0.0.0", only: :dev},
+      {:ex_doc, "~> 0.9", only: :dev},
+      {:excoveralls, "~> 0.5.7", only: :test},
+      {:httpoison, "~> 0.11.2"},
     ]
   end
 end
