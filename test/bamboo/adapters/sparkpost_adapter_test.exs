@@ -18,9 +18,9 @@ defmodule Bamboo.SparkPostAdapterTest do
     plug :dispatch
 
     def start_server(parent) do
-      Agent.start_link(fn -> HashDict.new end, name: __MODULE__)
-      Agent.update(__MODULE__, &HashDict.put(&1, :parent, parent))
-      port = get_free_port
+      Agent.start_link(fn -> Map.new() end, name: __MODULE__)
+      Agent.update(__MODULE__, &Map.put(&1, :parent, parent))
+      port = get_free_port()
 
       Application.put_env(:bamboo, :sparkpost_base_uri, "http://localhost:#{port}/")
       Plug.Adapters.Cowboy.http __MODULE__, [], port: port, ref: __MODULE__
@@ -45,14 +45,14 @@ defmodule Bamboo.SparkPostAdapterTest do
     end
 
     defp send_to_parent(conn) do
-      parent = Agent.get(__MODULE__, fn(set) -> HashDict.get(set, :parent) end)
+      parent = Agent.get(__MODULE__, fn(set) -> Map.get(set, :parent) end)
       send parent, {:fake_sparkpost, conn}
       conn
     end
   end
 
   setup do
-    FakeSparkPost.start_server(self)
+    FakeSparkPost.start_server(self())
 
     on_exit fn ->
       FakeSparkPost.shutdown
@@ -72,7 +72,7 @@ defmodule Bamboo.SparkPostAdapterTest do
   end
 
   test "deliver/2 sends the to the right url" do
-    new_email |> SparkPostAdapter.deliver(@config)
+    new_email() |> SparkPostAdapter.deliver(@config)
 
     assert_receive {:fake_sparkpost, %{request_path: request_path}}
 
@@ -123,7 +123,7 @@ defmodule Bamboo.SparkPostAdapterTest do
   end
 
   test "deliver/2 adds extra params to the message " do
-    email = new_email |> SparkPostHelper.mark_transactional
+    email = new_email() |> SparkPostHelper.mark_transactional
 
     email |> SparkPostAdapter.deliver(@config)
 
