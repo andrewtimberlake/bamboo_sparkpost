@@ -1,4 +1,10 @@
-# Bamboo.SparkPostAdapter
+<a href="https://www.sparkpost.com"><img src="https://www.sparkpost.com/sites/default/files/attachments/SparkPost_Logo_2-Color_Gray-Orange_RGB.svg" width="200px"/></a>
+
+[Sign up](https://app.sparkpost.com/sign-up?src=Dev-Website&sfdcid=70160000000pqBb) for a SparkPost account and visit our [Developer Hub](https://developers.sparkpost.com) for even more content.
+
+# Bamboo SparkPost Adapter
+
+[![Travis CI](https://travis-ci.org/SparkPost/bamboo_sparkpost.svg?branch=master)](https://travis-ci.org/SparkPost/bamboo_sparkpost) [![Coverage Status](https://coveralls.io/repos/SparkPost/bamboo_sparkpost/badge.svg?branch=master&service=github)](https://coveralls.io/github/SparkPost/bamboo_sparkpost?branch=master) [![Slack Status](http://slack.sparkpost.com/badge.svg)](http://slack.sparkpost.com)
 
 An Adapter for the [Bamboo](https://github.com/thoughtbot/bamboo) email app.
 
