@@ -2,7 +2,7 @@ defmodule Bamboo.SparkPostAdapter.Mixfile do
   use Mix.Project
 
   @project_url "https://github.com/andrewtimberlake/bamboo_sparkpost"
-  @version "0.5.1"
+  @version "0.8.0"
 
   def project do
     [app: :bamboo_sparkpost,
@@ -53,7 +53,7 @@ defmodule Bamboo.SparkPostAdapter.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:bamboo, "> 0.5.0 and < 2.0.0 or ~> 1.0.0-rc.1"},
+      {:bamboo, "~> 0.8.0"},
       {:ex_doc, "~> 0.9", only: :dev},
       {:earmark, ">= 0.0.0", only: :dev},
       {:cowboy, "~> 1.0", only: [:test, :dev]},
