@@ -84,7 +84,7 @@ defmodule Bamboo.SparkPostAdapterTest do
       from: {"From", "from@foo.com"},
       subject: "My Subject",
       text_body: "TEXT BODY",
-      html_body: "HTML BODY",
+      html_body: "HTML BODY"
     )
     |> Email.put_header("Reply-To", "reply@foo.com")
 
@@ -108,7 +108,7 @@ defmodule Bamboo.SparkPostAdapterTest do
     email = new_email(
       to: [{"To", "to@bar.com"}],
       cc: [{"CC", "cc@bar.com"}],
-      bcc: [{"BCC", "bcc@bar.com"}],
+      bcc: [{"BCC", "bcc@bar.com"}]
     )
 
     email |> SparkPostAdapter.deliver(@config)
@@ -143,7 +143,7 @@ defmodule Bamboo.SparkPostAdapterTest do
   test "raises if the response is not a success" do
     email = new_email(from: "INVALID_EMAIL")
 
-    assert_raise Bamboo.SparkPostAdapter.ApiError, fn ->
+    assert_raise Bamboo.ApiError, fn ->
       email |> SparkPostAdapter.deliver(@config)
     end
   end
@@ -151,7 +151,7 @@ defmodule Bamboo.SparkPostAdapterTest do
   test "removes api key from error output" do
     email = new_email(from: "INVALID_EMAIL")
 
-    assert_raise Bamboo.SparkPostAdapter.ApiError, ~r/"key" => "\[FILTERED\]"/, fn ->
+    assert_raise Bamboo.ApiError, ~r/"key" => "\[FILTERED\]"/, fn ->
       email |> SparkPostAdapter.deliver(@config)
     end
   end
