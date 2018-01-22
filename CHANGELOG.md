@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.8.0
+
+* Updated dependency to Bamboo 0.8.0
+* Switched from HTTPoison to hackney (based on Bamboo's switch)
+* Removed compiler warnings from Elixir 1.4
+
 ## 0.5.1
 
 * Fixed SparkPost tag handling

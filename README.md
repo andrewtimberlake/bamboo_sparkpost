@@ -1,4 +1,5 @@
 # Bamboo.SparkPostAdapter
+[![Build Status](https://travis-ci.org/andrewtimberlake/bamboo_sparkpost.svg?branch=master)](https://travis-ci.org/andrewtimberlake/bamboo_sparkpost)
 
 An Adapter for the [Bamboo](https://github.com/thoughtbot/bamboo) email app.
 
@@ -10,7 +11,7 @@ The package can be installed as:
 
 ```elixir
 def deps do
-  [{:bamboo_sparkpost, "~> 0.5.0"}]
+  [{:bamboo_sparkpost, "~> 0.8.0"}]
 end
 ```
 
