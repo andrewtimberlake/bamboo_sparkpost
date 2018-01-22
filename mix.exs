@@ -14,8 +14,8 @@ defmodule Bamboo.SparkPostAdapter.Mixfile do
      description: "A Bamboo adapter for the SparkPost email service",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     package: package,
-     deps: deps,
+     package: package(),
+     deps: deps(),
      docs: fn ->
        [source_ref: "v#{@version}",
         canonical: "http://hexdocs.pm/bamboo_sparkpost",
@@ -53,7 +53,7 @@ defmodule Bamboo.SparkPostAdapter.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:bamboo, github: "andrewtimberlake/bamboo", branch: "feature/attachments"},
+      {:bamboo, "> 0.5.0 and < 2.0.0 or ~> 1.0.0-rc.1"},
       {:ex_doc, "~> 0.9", only: :dev},
       {:earmark, ">= 0.0.0", only: :dev},
       {:cowboy, "~> 1.0", only: [:test, :dev]},
