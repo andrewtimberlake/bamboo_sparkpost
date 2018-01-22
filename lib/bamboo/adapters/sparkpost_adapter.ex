@@ -47,8 +47,9 @@ defmodule Bamboo.SparkPostAdapter do
 
   def deliver(email, config) do
     api_key = get_key(config)
+    hackney_options = Map.get(config, :hackney_options, [])
     params = email |> convert_to_sparkpost_params |> Poison.encode!
-    case request!(@send_message_path, params, api_key) do
+    case request!(@send_message_path, params, api_key, hackney_options) do
       {:ok, status, _headers, response} when status > 299 ->
         raise(ApiError, %{params: params, response: response})
       {:error, reason} ->
@@ -65,7 +66,7 @@ defmodule Bamboo.SparkPostAdapter do
       config
     end
   end
-  
+
   @doc false
   def supports_attachments?, do: true
 
@@ -184,9 +185,9 @@ defmodule Bamboo.SparkPostAdapter do
     end)
   end
 
-  defp request!(path, params, api_key) do
+  defp request!(path, params, api_key, hackney_options) do
     uri = base_uri() <> path
-    :hackney.post(uri, headers(api_key), params, [:with_body])
+    :hackney.post(uri, headers(api_key), params, [:with_body] ++ hackney_options)
   end
 
   defp base_uri do

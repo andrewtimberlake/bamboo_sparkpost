@@ -28,11 +28,25 @@ end
 ```elixir
 # In your config/config.exs file
 config :my_app, MyApp.Mailer,
-  adapter: Bamboo.SparkPostAdapter
+  adapter: Bamboo.SparkPostAdapter,
   api_key: "my-api-key"
 ```
 
   4. Follow Bamboo [Getting Started Guide](https://github.com/thoughtbot/bamboo#getting-started)
+
+  5. Optionally add `hackney_options` section
+
+```elixir
+# In your config/config.exs file
+config :my_app, MyApp.Mailer,
+  adapter: Bamboo.SparkPostAdapter,
+  api_key: "my-api-key",
+  hackney_options: [
+    connect_timeout: 8_000,
+    recv_timeout: 5_000
+  ]
+```
+
 
 ## Advanced Usage
 
