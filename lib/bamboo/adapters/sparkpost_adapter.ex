@@ -22,28 +22,9 @@ defmodule Bamboo.SparkPostAdapter do
   @default_base_uri "https://api.sparkpost.com"
   @send_message_path "/api/v1/transmissions"
   @behaviour Bamboo.Adapter
+  @service_name "SparkPost"
 
-  defmodule ApiError do
-    defexception [:message]
-
-    def exception(%{params: params, response: response}) do
-      filtered_params = params |> Poison.decode! |> Map.put("key", "[FILTERED]")
-
-      message = """
-      There was a problem sending the email through the SparkPost API.
-
-      Here is the response:
-
-      #{inspect response, limit: :infinity}
-
-
-      Here are the params we sent:
-
-      #{inspect filtered_params, limit: :infinity}
-      """
-      %ApiError{message: message}
-    end
-  end
+  import Bamboo.ApiError
 
   def deliver(email, config) do
     api_key = get_key(config)
@@ -51,9 +32,10 @@ defmodule Bamboo.SparkPostAdapter do
     params = email |> convert_to_sparkpost_params |> Poison.encode!
     case request!(@send_message_path, params, api_key, hackney_options) do
       {:ok, status, _headers, response} when status > 299 ->
-        raise(ApiError, %{params: params, response: response})
+        filtered_params = params |> Plug.Conn.Query.decode() |> Map.put("key", "[FILTERED]")
+        raise_api_error(@service_name, response, filtered_params)
       {:error, reason} ->
-        raise(ApiError, %{message: inspect(reason)})
+        raise_api_error(inspect(reason))
       response -> response
     end
   end
@@ -173,14 +155,10 @@ defmodule Bamboo.SparkPostAdapter do
     attachments
     |> Enum.reverse
     |> Enum.map(fn(att) ->
-      data = case att.path do
-               {:binary, data} -> data
-               _ -> File.read!(att.path)
-             end
       %{
         name: att.filename,
         type: att.content_type,
-        data: Base.encode64(data)
+        data: Base.encode64(att.data)
       }
     end)
   end

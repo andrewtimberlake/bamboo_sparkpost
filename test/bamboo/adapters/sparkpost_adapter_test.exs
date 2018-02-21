@@ -3,6 +3,7 @@ defmodule Bamboo.SparkPostAdapterTest do
   alias Bamboo.Email
   alias Bamboo.SparkPostAdapter
   alias Bamboo.SparkPostHelper
+  alias Bamboo.Attachment
 
   @config %{adapter: SparkPostAdapter, api_key: "123_abc"}
   @config_with_bad_key %{adapter: SparkPostAdapter, api_key: nil}
@@ -119,7 +120,7 @@ defmodule Bamboo.SparkPostAdapterTest do
       text_body: "TEXT BODY",
       html_body: "HTML BODY",
     )
-    |> Email.put_attachment({:binary, File.read!(Path.join(__DIR__, "../../support/attachment.txt"))}, filename: "test.txt", content_type: "text/plain")
+    |> Email.put_attachment(%Attachment{data: File.read!(Path.join(__DIR__, "../../support/attachment.txt")), filename: "test.txt", content_type: "text/plain"})
 
     email |> SparkPostAdapter.deliver(@config)
 
@@ -174,7 +175,7 @@ defmodule Bamboo.SparkPostAdapterTest do
   test "raises if the response is not a success" do
     email = new_email(from: "INVALID_EMAIL")
 
-    assert_raise Bamboo.SparkPostAdapter.ApiError, fn ->
+    assert_raise Bamboo.ApiError, fn ->
       email |> SparkPostAdapter.deliver(@config)
     end
   end
@@ -182,7 +183,7 @@ defmodule Bamboo.SparkPostAdapterTest do
   test "removes api key from error output" do
     email = new_email(from: "INVALID_EMAIL")
 
-    assert_raise Bamboo.SparkPostAdapter.ApiError, ~r/"key" => "\[FILTERED\]"/, fn ->
+    assert_raise Bamboo.ApiError, ~r/"key" => "\[FILTERED\]"/, fn ->
       email |> SparkPostAdapter.deliver(@config)
     end
   end
