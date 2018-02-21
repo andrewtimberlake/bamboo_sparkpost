@@ -85,7 +85,7 @@ defmodule Bamboo.SparkPostAdapterTest do
       from: {"From", "from@foo.com"},
       subject: "My Subject",
       text_body: "TEXT BODY",
-      html_body: "HTML BODY",
+      html_body: "HTML BODY"
     )
     |> Email.put_header("Reply-To", "reply@foo.com")
     |> Email.put_attachment(Path.join(__DIR__, "../../support/attachment.txt"))
@@ -118,7 +118,7 @@ defmodule Bamboo.SparkPostAdapterTest do
       from: {"From", "from@foo.com"},
       subject: "My Subject",
       text_body: "TEXT BODY",
-      html_body: "HTML BODY",
+      html_body: "HTML BODY"
     )
     |> Email.put_attachment(%Attachment{data: File.read!(Path.join(__DIR__, "../../support/attachment.txt")), filename: "test.txt", content_type: "text/plain"})
 
@@ -140,7 +140,7 @@ defmodule Bamboo.SparkPostAdapterTest do
     email = new_email(
       to: [{"To", "to@bar.com"}],
       cc: [{"CC", "cc@bar.com"}],
-      bcc: [{"BCC", "bcc@bar.com"}],
+      bcc: [{"BCC", "bcc@bar.com"}]
     )
 
     email |> SparkPostAdapter.deliver(@config)
