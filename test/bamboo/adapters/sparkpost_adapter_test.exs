@@ -79,7 +79,7 @@ defmodule Bamboo.SparkPostAdapterTest do
     assert request_path == "/api/v1/transmissions"
   end
 
-  test "deliver/2 sends from, html and text body, subject, reply_to, and headers" do
+  test "deliver/2 sends from, html and text body, subject, reply_to, headers, and attachments" do
     email = new_email(
       from: {"From", "from@foo.com"},
       subject: "My Subject",
@@ -87,6 +87,7 @@ defmodule Bamboo.SparkPostAdapterTest do
       html_body: "HTML BODY",
     )
     |> Email.put_header("Reply-To", "reply@foo.com")
+    |> Email.put_attachment(Path.join(__DIR__, "../../support/attachment.txt"))
 
     email |> SparkPostAdapter.deliver(@config)
 
@@ -102,6 +103,36 @@ defmodule Bamboo.SparkPostAdapterTest do
     assert message["html"] == email.html_body
     assert message["headers"] == %{}
     assert message["reply_to"] == "reply@foo.com"
+    assert message["attachments"] == [
+      %{
+        "type" => "text/plain",
+        "name" => "attachment.txt",
+        "data" => "VGVzdCBBdHRhY2htZW50Cg=="
+      }
+    ]
+  end
+
+  test "deliver/2 handles binary attachments" do
+    email = new_email(
+      from: {"From", "from@foo.com"},
+      subject: "My Subject",
+      text_body: "TEXT BODY",
+      html_body: "HTML BODY",
+    )
+    |> Email.put_attachment({:binary, File.read!(Path.join(__DIR__, "../../support/attachment.txt"))}, filename: "test.txt", content_type: "text/plain")
+
+    email |> SparkPostAdapter.deliver(@config)
+
+    assert_receive {:fake_sparkpost, %{params: params}}
+
+    message = params["content"]
+    assert message["attachments"] == [
+      %{
+        "type" => "text/plain",
+        "name" => "test.txt",
+        "data" => "VGVzdCBBdHRhY2htZW50Cg=="
+      }
+    ]
   end
 
   test "deliver/2 correctly formats recipients" do

@@ -65,6 +65,9 @@ defmodule Bamboo.SparkPostAdapter do
       config
     end
   end
+  
+  @doc false
+  def supports_attachments?, do: true
 
   defp get_key(config) do
     case Map.get(config, :api_key) do
@@ -95,6 +98,7 @@ defmodule Bamboo.SparkPostAdapter do
         html: email.html_body,
         reply_to: extract_reply_to(email),
         headers: drop_reply_to(email_headers(email)),
+        attachments: attachments(email)
       },
       recipients: recipients(email),
     }
@@ -162,6 +166,22 @@ defmodule Bamboo.SparkPostAdapter do
 
   defp headers(api_key) do
     [{"content-type", "application/json"}, {"authorization", api_key}]
+  end
+
+  defp attachments(%{attachments: attachments}) do
+    attachments
+    |> Enum.reverse
+    |> Enum.map(fn(att) ->
+      data = case att.path do
+               {:binary, data} -> data
+               _ -> File.read!(att.path)
+             end
+      %{
+        name: att.filename,
+        type: att.content_type,
+        data: Base.encode64(data)
+      }
+    end)
   end
 
   defp request!(path, params, api_key) do

@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 1.0.0-rc.0
+
+* Update dependency to Bamboo 1.0.0-rc.1
+* Add attachment support
+
 ## 0.8.0
 
 * Updated dependency to Bamboo 0.8.0
