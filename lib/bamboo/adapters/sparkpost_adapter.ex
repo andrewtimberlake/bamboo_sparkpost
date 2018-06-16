@@ -29,14 +29,18 @@ defmodule Bamboo.SparkPostAdapter do
   def deliver(email, config) do
     api_key = get_key(config)
     hackney_options = Map.get(config, :hackney_options, [])
-    params = email |> convert_to_sparkpost_params |> Poison.encode!
+    params = email |> convert_to_sparkpost_params |> Poison.encode!()
+
     case request!(@send_message_path, params, api_key, hackney_options) do
       {:ok, status, _headers, response} when status > 299 ->
         filtered_params = params |> Plug.Conn.Query.decode() |> Map.put("key", "[FILTERED]")
         raise_api_error(@service_name, response, filtered_params)
+
       {:error, reason} ->
         raise_api_error(inspect(reason))
-      response -> response
+
+      response ->
+        response
     end
   end
 
@@ -65,7 +69,7 @@ defmodule Bamboo.SparkPostAdapter do
 
     * Here are the config options that were passed in:
 
-    #{inspect config}
+    #{inspect(config)}
     """
   end
 
@@ -74,7 +78,7 @@ defmodule Bamboo.SparkPostAdapter do
       content: %{
         from: %{
           name: email.from |> elem(0),
-          email: email.from |> elem(1),
+          email: email.from |> elem(1)
         },
         subject: email.subject,
         text: email.text_body,
@@ -83,7 +87,7 @@ defmodule Bamboo.SparkPostAdapter do
         headers: drop_reply_to(email_headers(email)),
         attachments: attachments(email)
       },
-      recipients: recipients(email),
+      recipients: recipients(email)
     }
     |> add_message_params(email)
     |> add_tags(email)
@@ -93,7 +97,11 @@ defmodule Bamboo.SparkPostAdapter do
     if email.cc == [] do
       email.headers
     else
-      Map.put_new(email.headers, "CC", Enum.map(email.cc, fn({_,addr}) -> addr end) |> Enum.join(","))
+      Map.put_new(
+        email.headers,
+        "CC",
+        Enum.map(email.cc, fn {_, addr} -> addr end) |> Enum.join(",")
+      )
     end
   end
 
@@ -106,19 +114,23 @@ defmodule Bamboo.SparkPostAdapter do
   end
 
   defp add_message_params(sparkpost_message, %{private: %{message_params: message_params}}) do
-    Enum.reduce(message_params, sparkpost_message, fn({key, value}, sparkpost_message) ->
+    Enum.reduce(message_params, sparkpost_message, fn {key, value}, sparkpost_message ->
       Map.put(sparkpost_message, key, value)
     end)
   end
+
   defp add_message_params(sparkpost_message, _), do: sparkpost_message
 
   defp add_tags(sparkpost_message, %{private: %{tags: tags}}) do
-    new_recipients = Enum.reduce(sparkpost_message.recipients, [], fn(rcpt, acc) ->
-      rcpt = Map.put_new(rcpt, :tags, tags)
-      [rcpt | acc]
-    end)
+    new_recipients =
+      Enum.reduce(sparkpost_message.recipients, [], fn rcpt, acc ->
+        rcpt = Map.put_new(rcpt, :tags, tags)
+        [rcpt | acc]
+      end)
+
     %{sparkpost_message | recipients: Enum.reverse(new_recipients)}
   end
+
   defp add_tags(sparkpost_message, _), do: sparkpost_message
 
   defp recipients(email) do
@@ -129,21 +141,23 @@ defmodule Bamboo.SparkPostAdapter do
   end
 
   defp add_recipients(recipients, new_recipients) do
-    Enum.reduce(new_recipients, recipients, fn(recipient, recipients) ->
-      recipients ++ [%{"address" => %{
-        name: recipient |> elem(0),
-        email: recipient |> elem(1),
-      }}]
+    Enum.reduce(new_recipients, recipients, fn {name, email}, recipients ->
+      recipients ++ [%{"address" => %{name: name, email: email}}]
     end)
   end
 
   defp add_b_cc(recipients, new_recipients, to) do
-    Enum.reduce(new_recipients, recipients, fn(recipient, recipients) ->
-      recipients ++ [%{"address" => %{
-        name: recipient |> elem(0),
-        email: recipient |> elem(1),
-        header_to: Enum.map(to, fn({_,addr}) -> addr end) |> Enum.join(","),
-      }}]
+    Enum.reduce(new_recipients, recipients, fn {name, email}, recipients ->
+      recipients ++
+        [
+          %{
+            "address" => %{
+              name: name,
+              email: email,
+              header_to: Enum.map(to, fn {_, addr} -> addr end) |> Enum.join(",")
+            }
+          }
+        ]
     end)
   end
 
@@ -153,8 +167,8 @@ defmodule Bamboo.SparkPostAdapter do
 
   defp attachments(%{attachments: attachments}) do
     attachments
-    |> Enum.reverse
-    |> Enum.map(fn(att) ->
+    |> Enum.reverse()
+    |> Enum.map(fn att ->
       %{
         name: att.filename,
         type: att.content_type,

@@ -21,9 +21,11 @@ defmodule Bamboo.SparkPostHelper do
   """
   def put_param(email, keys, value) do
     keys = List.wrap(keys)
-    message_params = (email.private[:message_params] || %{})
-    |> ensure_keys(keys)
-    |> update_value(keys, value)
+
+    message_params =
+      (email.private[:message_params] || %{})
+      |> ensure_keys(keys)
+      |> update_value(keys, value)
 
     email
     |> Email.put_private(:message_params, message_params)
@@ -55,6 +57,7 @@ defmodule Bamboo.SparkPostHelper do
   def meta_data(email, map) when is_map(map) do
     put_param(email, :metadata, map)
   end
+
   def meta_data(email, map) do
     put_param(email, :metadata, Enum.into(map, %{}))
   end
@@ -96,6 +99,7 @@ defmodule Bamboo.SparkPostHelper do
       val -> val ++ value
     end)
   end
+
   defp update_value(map, keys, value) when is_map(value) do
     map
     |> update_in(keys, fn
@@ -103,16 +107,19 @@ defmodule Bamboo.SparkPostHelper do
       val -> Map.merge(val, value)
     end)
   end
+
   defp update_value(map, keys, value) do
     map
     |> put_in(keys, value)
   end
 
   defp ensure_keys(map, [key]) do
-    Map.update(map, key, nil, fn(value) -> value end)
+    Map.update(map, key, nil, fn value -> value end)
   end
+
   defp ensure_keys(map, [key | tail]) do
-    Map.update(map, key, ensure_keys(%{}, tail), fn(value) -> ensure_keys(value, tail) end)
+    Map.update(map, key, ensure_keys(%{}, tail), fn value -> ensure_keys(value, tail) end)
   end
+
   defp ensure_keys(map, key), do: ensure_keys(map, [key])
 end

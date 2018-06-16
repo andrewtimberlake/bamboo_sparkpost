@@ -11,20 +11,23 @@ defmodule Bamboo.SparkPostAdapterTest do
   defmodule FakeSparkPost do
     use Plug.Router
 
-    plug Plug.Parsers,
+    plug(
+      Plug.Parsers,
       parsers: [:urlencoded, :multipart, :json],
       pass: ["*/*"],
       json_decoder: Poison
-    plug :match
-    plug :dispatch
+    )
+
+    plug(:match)
+    plug(:dispatch)
 
     def start_server(parent) do
-      Agent.start_link(fn -> Map.new end, name: __MODULE__)
+      Agent.start_link(fn -> Map.new() end, name: __MODULE__)
       Agent.update(__MODULE__, &Map.put(&1, :parent, parent))
       port = get_free_port()
 
       Application.put_env(:bamboo, :sparkpost_base_uri, "http://localhost:#{port}/")
-      Plug.Adapters.Cowboy.http __MODULE__, [], port: port, ref: __MODULE__
+      Plug.Adapters.Cowboy.http(__MODULE__, [], port: port, ref: __MODULE__)
     end
 
     def get_free_port do
@@ -35,7 +38,7 @@ defmodule Bamboo.SparkPostAdapterTest do
     end
 
     def shutdown do
-      Plug.Adapters.Cowboy.shutdown __MODULE__
+      Plug.Adapters.Cowboy.shutdown(__MODULE__)
     end
 
     post "/api/v1/transmissions" do
@@ -46,8 +49,8 @@ defmodule Bamboo.SparkPostAdapterTest do
     end
 
     defp send_to_parent(conn) do
-      parent = Agent.get(__MODULE__, fn(set) -> Map.get(set, :parent) end)
-      send parent, {:fake_sparkpost, conn}
+      parent = Agent.get(__MODULE__, fn set -> Map.get(set, :parent) end)
+      send(parent, {:fake_sparkpost, conn})
       conn
     end
   end
@@ -55,9 +58,9 @@ defmodule Bamboo.SparkPostAdapterTest do
   setup do
     FakeSparkPost.start_server(self())
 
-    on_exit fn ->
-      FakeSparkPost.shutdown
-    end
+    on_exit(fn ->
+      FakeSparkPost.shutdown()
+    end)
 
     :ok
   end
@@ -81,18 +84,19 @@ defmodule Bamboo.SparkPostAdapterTest do
   end
 
   test "deliver/2 sends from, html and text body, subject, reply_to, headers, and attachments" do
-    email = new_email(
-      from: {"From", "from@foo.com"},
-      subject: "My Subject",
-      text_body: "TEXT BODY",
-      html_body: "HTML BODY"
-    )
-    |> Email.put_header("Reply-To", "reply@foo.com")
-    |> Email.put_attachment(Path.join(__DIR__, "../../support/attachment.txt"))
+    email =
+      new_email(
+        from: {"From", "from@foo.com"},
+        subject: "My Subject",
+        text_body: "TEXT BODY",
+        html_body: "HTML BODY"
+      )
+      |> Email.put_header("Reply-To", "reply@foo.com")
+      |> Email.put_attachment(Path.join(__DIR__, "../../support/attachment.txt"))
 
     email |> SparkPostAdapter.deliver(@config)
 
-    assert_receive {:fake_sparkpost, %{params: params}=conn}
+    assert_receive {:fake_sparkpost, %{params: params} = conn}
     assert Plug.Conn.get_req_header(conn, "content-type") == ["application/json"]
     assert Plug.Conn.get_req_header(conn, "authorization") == [@config[:api_key]]
 
@@ -104,58 +108,81 @@ defmodule Bamboo.SparkPostAdapterTest do
     assert message["html"] == email.html_body
     assert message["headers"] == %{}
     assert message["reply_to"] == "reply@foo.com"
+
     assert message["attachments"] == [
-      %{
-        "type" => "text/plain",
-        "name" => "attachment.txt",
-        "data" => "VGVzdCBBdHRhY2htZW50Cg=="
-      }
-    ]
+             %{
+               "type" => "text/plain",
+               "name" => "attachment.txt",
+               "data" => "VGVzdCBBdHRhY2htZW50Cg=="
+             }
+           ]
   end
 
   test "deliver/2 handles binary attachments" do
-    email = new_email(
-      from: {"From", "from@foo.com"},
-      subject: "My Subject",
-      text_body: "TEXT BODY",
-      html_body: "HTML BODY"
-    )
-    |> Email.put_attachment(%Attachment{data: File.read!(Path.join(__DIR__, "../../support/attachment.txt")), filename: "test.txt", content_type: "text/plain"})
+    email =
+      new_email(
+        from: {"From", "from@foo.com"},
+        subject: "My Subject",
+        text_body: "TEXT BODY",
+        html_body: "HTML BODY"
+      )
+      |> Email.put_attachment(%Attachment{
+        data: File.read!(Path.join(__DIR__, "../../support/attachment.txt")),
+        filename: "test.txt",
+        content_type: "text/plain"
+      })
 
     email |> SparkPostAdapter.deliver(@config)
 
     assert_receive {:fake_sparkpost, %{params: params}}
 
     message = params["content"]
+
     assert message["attachments"] == [
-      %{
-        "type" => "text/plain",
-        "name" => "test.txt",
-        "data" => "VGVzdCBBdHRhY2htZW50Cg=="
-      }
-    ]
+             %{
+               "type" => "text/plain",
+               "name" => "test.txt",
+               "data" => "VGVzdCBBdHRhY2htZW50Cg=="
+             }
+           ]
   end
 
   test "deliver/2 correctly formats recipients" do
-    email = new_email(
-      to: [{"To", "to@bar.com"}],
-      cc: [{"CC", "cc@bar.com"}],
-      bcc: [{"BCC", "bcc@bar.com"}]
-    )
+    email =
+      new_email(
+        to: [{"To", "to@bar.com"}],
+        cc: [{"CC", "cc@bar.com"}],
+        bcc: [{"BCC", "bcc@bar.com"}]
+      )
 
     email |> SparkPostAdapter.deliver(@config)
 
-    assert_receive {:fake_sparkpost, %{params: %{"recipients" => recipients, "content" => %{"headers" => headers}}}}
+    assert_receive {:fake_sparkpost,
+                    %{params: %{"recipients" => recipients, "content" => %{"headers" => headers}}}}
+
     assert recipients == [
-      %{"address" => %{"name" => "To", "email" => "to@bar.com"}},
-      %{"address" => %{"name" => "CC", "email" => "cc@bar.com", "header_to" => "to@bar.com"}},
-      %{"address" => %{"name" => "BCC", "email" => "bcc@bar.com", "header_to" => "to@bar.com"}},
-    ]
+             %{"address" => %{"name" => "To", "email" => "to@bar.com"}},
+             %{
+               "address" => %{
+                 "name" => "CC",
+                 "email" => "cc@bar.com",
+                 "header_to" => "to@bar.com"
+               }
+             },
+             %{
+               "address" => %{
+                 "name" => "BCC",
+                 "email" => "bcc@bar.com",
+                 "header_to" => "to@bar.com"
+               }
+             }
+           ]
+
     assert headers["CC"] == "cc@bar.com"
   end
 
   test "deliver/2 adds extra params to the message " do
-    email = new_email() |> SparkPostHelper.mark_transactional
+    email = new_email() |> SparkPostHelper.mark_transactional()
 
     email |> SparkPostAdapter.deliver(@config)
 
@@ -164,12 +191,23 @@ defmodule Bamboo.SparkPostAdapterTest do
   end
 
   test "deliver/2 adds tags to the recipients" do
-    email = new_email(to: ["foo@example.com", "bar@example.com"]) |> SparkPostHelper.tag("test-tag")
+    email =
+      new_email(to: ["foo@example.com", "bar@example.com"]) |> SparkPostHelper.tag("test-tag")
 
     email |> SparkPostAdapter.deliver(@config)
 
     assert_receive {:fake_sparkpost, %{params: params}}
-    assert params["recipients"] == [%{"address" => %{"email" => "foo@example.com", "name" => nil}, "tags" => ["test-tag"]}, %{"address" => %{"email" => "bar@example.com", "name" => nil}, "tags" => ["test-tag"]}]
+
+    assert params["recipients"] == [
+             %{
+               "address" => %{"email" => "foo@example.com", "name" => nil},
+               "tags" => ["test-tag"]
+             },
+             %{
+               "address" => %{"email" => "bar@example.com", "name" => nil},
+               "tags" => ["test-tag"]
+             }
+           ]
   end
 
   test "raises if the response is not a success" do
@@ -190,6 +228,6 @@ defmodule Bamboo.SparkPostAdapterTest do
 
   defp new_email(attrs \\ []) do
     attrs = Keyword.merge([from: "foo@bar.com", to: []], attrs)
-    Email.new_email(attrs) |> Bamboo.Mailer.normalize_addresses
+    Email.new_email(attrs) |> Bamboo.Mailer.normalize_addresses()
   end
 end
