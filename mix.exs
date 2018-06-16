@@ -21,7 +21,7 @@ defmodule Bamboo.SparkPostAdapter.Mixfile do
         [
           source_ref: "v#{@version}",
           canonical: "http://hexdocs.pm/bamboo_sparkpost",
-          main: "Bamboo Sparkpost Adapter",
+          main: "Bamboo.SparkPostAdapter",
           source_url: @project_url,
           extras: ["README.md", "CHANGELOG.md"]
         ]
