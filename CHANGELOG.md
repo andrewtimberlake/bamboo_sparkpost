@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 1.1.0
+
+* Add ability to set request headers in config to allow for working with a sub-account
+
+## 1.0.0
+
+* Update dependency to Bamboo 1.0.0
+
 ## 1.0.0-rc.0
 
 * Update dependency to Bamboo 1.0.0-rc.1
