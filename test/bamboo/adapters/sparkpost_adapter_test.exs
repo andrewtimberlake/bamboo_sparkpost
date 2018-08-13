@@ -210,6 +210,16 @@ defmodule Bamboo.SparkPostAdapterTest do
            ]
   end
 
+  test "deliver/2 adds request headers specified in the config" do
+    config = %{adapter: SparkPostAdapter, api_key: "123_abc", request_headers: [{"X-MSYS-SUBACCOUNT", "123"}]}
+    new_email() |> SparkPostAdapter.deliver(config)
+
+    assert_receive {:fake_sparkpost, %{params: params} = conn}
+    assert Plug.Conn.get_req_header(conn, "content-type") == ["application/json"]
+    assert Plug.Conn.get_req_header(conn, "authorization") == [config[:api_key]]
+    assert Plug.Conn.get_req_header(conn, "x-msys-subaccount") == ["123"]
+  end
+
   test "raises if the response is not a success" do
     email = new_email(from: "INVALID_EMAIL")
 
