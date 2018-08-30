@@ -34,7 +34,7 @@ defmodule Bamboo.SparkPostAdapter do
 
     case request!(@send_message_path, params, api_key, hackney_options, request_headers) do
       {:ok, status, _headers, response} when status > 299 ->
-        filtered_params = params |> Plug.Conn.Query.decode() |> Map.put("key", "[FILTERED]")
+        filtered_params = params |> Poison.decode!() |> Map.put("key", "[FILTERED]")
         raise_api_error(@service_name, response, filtered_params)
 
       {:error, reason} ->
