@@ -211,10 +211,15 @@ defmodule Bamboo.SparkPostAdapterTest do
   end
 
   test "deliver/2 adds request headers specified in the config" do
-    config = %{adapter: SparkPostAdapter, api_key: "123_abc", request_headers: [{"X-MSYS-SUBACCOUNT", "123"}]}
+    config = %{
+      adapter: SparkPostAdapter,
+      api_key: "123_abc",
+      request_headers: [{"X-MSYS-SUBACCOUNT", "123"}]
+    }
+
     new_email() |> SparkPostAdapter.deliver(config)
 
-    assert_receive {:fake_sparkpost, %{params: params} = conn}
+    assert_receive {:fake_sparkpost, %{params: _params} = conn}
     assert Plug.Conn.get_req_header(conn, "content-type") == ["application/json"]
     assert Plug.Conn.get_req_header(conn, "authorization") == [config[:api_key]]
     assert Plug.Conn.get_req_header(conn, "x-msys-subaccount") == ["123"]
@@ -222,14 +227,16 @@ defmodule Bamboo.SparkPostAdapterTest do
 
   describe "error responses" do
     setup do
-      email = new_email(
-        from: "INVALID_EMAIL",
-        subject: "My Subject",
-        text_body: "TEXT BODY",
-        html_body: "<!DOCTYPE html><html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head><title>Email</title>\n<style type=\"text/css\">\nbody {\n width: 100% !important; }\n\n</style>\n</head><body><p>\n<a href=\"https://www.example.org?utm_medium=email&utm_source=campaign\">Contact us</a>\n</p></body></html>"
-      )
+      email =
+        new_email(
+          from: "INVALID_EMAIL",
+          subject: "My Subject",
+          text_body: "TEXT BODY",
+          html_body:
+            "<!DOCTYPE html><html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head><title>Email</title>\n<style type=\"text/css\">\nbody {\n width: 100% !important; }\n\n</style>\n</head><body><p>\n<a href=\"https://www.example.org?utm_medium=email&utm_source=campaign\">Contact us</a>\n</p></body></html>"
+        )
 
-      { :ok, email: email }
+      {:ok, email: email}
     end
 
     test "raises if the response is not a success", %{email: email} do
