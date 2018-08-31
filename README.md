@@ -11,7 +11,7 @@ The package can be installed as:
 
 ```elixir
 def deps do
-  [{:bamboo_sparkpost, "~> 1.1.0"}]
+  [{:bamboo_sparkpost, "~> 1.1"}]
 end
 ```
 
