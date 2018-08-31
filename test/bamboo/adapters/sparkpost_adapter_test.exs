@@ -220,19 +220,28 @@ defmodule Bamboo.SparkPostAdapterTest do
     assert Plug.Conn.get_req_header(conn, "x-msys-subaccount") == ["123"]
   end
 
-  test "raises if the response is not a success" do
-    email = new_email(from: "INVALID_EMAIL")
+  describe "error responses" do
+    setup do
+      email = new_email(
+        from: "INVALID_EMAIL",
+        subject: "My Subject",
+        text_body: "TEXT BODY",
+        html_body: "<!DOCTYPE html><html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head><title>Email</title>\n<style type=\"text/css\">\nbody {\n width: 100% !important; }\n\n</style>\n</head><body><p>\n<a href=\"https://www.example.org?utm_medium=email&utm_source=campaign\">Contact us</a>\n</p></body></html>"
+      )
 
-    assert_raise Bamboo.ApiError, fn ->
-      email |> SparkPostAdapter.deliver(@config)
+      { :ok, email: email }
     end
-  end
 
-  test "removes api key from error output" do
-    email = new_email(from: "INVALID_EMAIL")
+    test "raises if the response is not a success", %{email: email} do
+      assert_raise Bamboo.ApiError, fn ->
+        email |> SparkPostAdapter.deliver(@config)
+      end
+    end
 
-    assert_raise Bamboo.ApiError, ~r/"key" => "\[FILTERED\]"/, fn ->
-      email |> SparkPostAdapter.deliver(@config)
+    test "removes api key from error output", %{email: email} do
+      assert_raise Bamboo.ApiError, ~r/"key" => "\[FILTERED\]"/, fn ->
+        email |> SparkPostAdapter.deliver(@config)
+      end
     end
   end
 
