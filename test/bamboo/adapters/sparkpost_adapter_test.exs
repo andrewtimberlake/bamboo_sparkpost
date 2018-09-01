@@ -186,7 +186,7 @@ defmodule Bamboo.SparkPostAdapterTest do
 
     email |> SparkPostAdapter.deliver(@config)
 
-    assert_receive {:fake_sparkpost, %{params: params}}
+    assert_receive {:fake_sparkpost, %{params: params}}, 200
     assert params["options"] == %{"transactional" => true}
   end
 
