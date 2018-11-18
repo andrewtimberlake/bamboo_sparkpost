@@ -30,11 +30,13 @@ defmodule Bamboo.SparkPostAdapter do
     api_key = get_key(config)
     hackney_options = Map.get(config, :hackney_options, [])
     request_headers = Map.get(config, :request_headers, [])
-    params = email |> convert_to_sparkpost_params |> Poison.encode!()
+    params = email |> convert_to_sparkpost_params |> Bamboo.json_library().encode!()
 
     case request!(@send_message_path, params, api_key, hackney_options, request_headers) do
       {:ok, status, _headers, response} when status > 299 ->
-        filtered_params = params |> Poison.decode!() |> Map.put("key", "[FILTERED]")
+        filtered_params =
+          params |> Bamboo.json_library().decode!() |> Map.put("key", "[FILTERED]")
+
         raise_api_error(@service_name, response, filtered_params)
 
       {:error, reason} ->
@@ -180,7 +182,13 @@ defmodule Bamboo.SparkPostAdapter do
 
   defp request!(path, params, api_key, hackney_options, request_headers) do
     uri = base_uri() <> path
-    :hackney.post(uri, headers(api_key) ++ request_headers, params, [:with_body] ++ hackney_options)
+
+    :hackney.post(
+      uri,
+      headers(api_key) ++ request_headers,
+      params,
+      [:with_body] ++ hackney_options
+    )
   end
 
   defp base_uri do
