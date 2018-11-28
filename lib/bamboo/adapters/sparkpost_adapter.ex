@@ -30,11 +30,11 @@ defmodule Bamboo.SparkPostAdapter do
     api_key = get_key(config)
     hackney_options = Map.get(config, :hackney_options, [])
     request_headers = Map.get(config, :request_headers, [])
-    params = email |> convert_to_sparkpost_params |> Poison.encode!()
+    params = email |> convert_to_sparkpost_params |> json_library().encode!()
 
     case request!(@send_message_path, params, api_key, hackney_options, request_headers) do
       {:ok, status, _headers, response} when status > 299 ->
-        filtered_params = params |> Poison.decode!() |> Map.put("key", "[FILTERED]")
+        filtered_params = params |> json_library().decode!() |> Map.put("key", "[FILTERED]")
         raise_api_error(@service_name, response, filtered_params)
 
       {:error, reason} ->
@@ -192,5 +192,12 @@ defmodule Bamboo.SparkPostAdapter do
   defp base_uri do
     uri = Application.get_env(:bamboo, :sparkpost_base_uri) || @default_base_uri
     String.replace_trailing(uri, "/", "")
+  end
+
+  # Configurable JSON library is inherited from Bamboo if the version is high enough
+  if :erlang.function_exported(Bamboo, :json_library, 0) do
+    def json_library, do: Bamboo.json_library()
+  else
+    def json_library, do: Poison
   end
 end

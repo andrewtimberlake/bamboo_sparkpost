@@ -15,7 +15,7 @@ defmodule Bamboo.SparkPostAdapterTest do
       Plug.Parsers,
       parsers: [:urlencoded, :multipart, :json],
       pass: ["*/*"],
-      json_decoder: Poison
+      json_decoder: Bamboo.SparkPostAdapter.json_library()
     )
 
     plug(:match)
