@@ -180,7 +180,13 @@ defmodule Bamboo.SparkPostAdapter do
 
   defp request!(path, params, api_key, hackney_options, request_headers) do
     uri = base_uri() <> path
-    :hackney.post(uri, headers(api_key) ++ request_headers, params, [:with_body] ++ hackney_options)
+
+    :hackney.post(
+      uri,
+      headers(api_key) ++ request_headers,
+      params,
+      [:with_body] ++ hackney_options
+    )
   end
 
   defp base_uri do
