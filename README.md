@@ -32,6 +32,14 @@ config :my_app, MyApp.Mailer,
   api_key: "my-api-key"
 ```
 
+If you are using SparkPost EU, make sure to also add this `:bamboo` configuration:
+
+```elixir
+# In your config/config.exs file
+config :bamboo,
+  sparkpost_base_uri: "https://api.eu.sparkpost.com"
+```
+
   4. Follow Bamboo [Getting Started Guide](https://github.com/thoughtbot/bamboo#getting-started)
 
   5. Optionally add `hackney_options` or `request_headers`
