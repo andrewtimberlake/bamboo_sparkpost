@@ -64,7 +64,7 @@ The SparkPost adapter provides a helper module for setting tags and other meta d
 ### Examples
 
 ```elixir
-include Bamboo.SparkPostHelper
+import Bamboo.SparkPostHelper
 
 email
 |> tag("my-tag")
