@@ -73,6 +73,16 @@ defmodule Bamboo.SparkPostHelper do
   end
 
   @doc ~S"""
+  Enables the inline CSS option
+
+  ## Example
+      email |> inline_css
+  """
+  def inline_css(email) do
+    put_param(email, [:options, :inline_css], true)
+  end
+
+  @doc ~S"""
   Disable open tracking (SparkPost defaults to true)
 
   ## Example

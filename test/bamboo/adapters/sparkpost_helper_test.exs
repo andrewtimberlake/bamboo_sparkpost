@@ -24,6 +24,11 @@ defmodule Bamboo.SparkPostHelperTest do
     assert email.private.message_params == %{options: %{transactional: true}}
   end
 
+  test "it sets the inline_css option" do
+    email = new_email() |> SparkPostHelper.inline_css()
+    assert email.private.message_params == %{options: %{inline_css: true}}
+  end
+
   test "it adds meta data" do
     email = new_email() |> SparkPostHelper.meta_data(foo: "bar")
     assert email.private.message_params == %{metadata: %{foo: "bar"}}
