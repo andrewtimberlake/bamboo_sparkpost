@@ -35,13 +35,13 @@ defmodule Bamboo.SparkPostAdapter do
     case request!(@send_message_path, params, api_key, hackney_options, request_headers) do
       {:ok, status, _headers, response} when status > 299 ->
         filtered_params = params |> json_library().decode!() |> Map.put("key", "[FILTERED]")
-        raise_api_error(@service_name, response, filtered_params)
+        {:error, build_api_error(@service_name, response, filtered_params)}
 
       {:error, reason} ->
-        raise_api_error(inspect(reason))
+        {:error, build_api_error(inspect(reason))}
 
-      response ->
-        response
+      {:ok, status, headers, response} ->
+        {:ok, %{status_code: status, headers: headers, body: response}}
     end
   end
 

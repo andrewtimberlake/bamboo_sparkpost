@@ -75,6 +75,12 @@ defmodule Bamboo.SparkPostAdapterTest do
     end
   end
 
+  test "deliver/2 returns an {:ok, response}" do
+    {:ok, response} = new_email() |> SparkPostAdapter.deliver(@config)
+
+    assert %{status_code: 200, headers: _, body: _} = response
+  end
+
   test "deliver/2 sends the to the right url" do
     new_email() |> SparkPostAdapter.deliver(@config)
 
@@ -239,16 +245,13 @@ defmodule Bamboo.SparkPostAdapterTest do
       {:ok, email: email}
     end
 
-    test "raises if the response is not a success", %{email: email} do
-      assert_raise Bamboo.ApiError, fn ->
-        email |> SparkPostAdapter.deliver(@config)
-      end
+    test "returns an error if the response is not a success", %{email: email} do
+      assert {:error, %Bamboo.ApiError{}} = email |> SparkPostAdapter.deliver(@config)
     end
 
     test "removes api key from error output", %{email: email} do
-      assert_raise Bamboo.ApiError, ~r/"key" => "\[FILTERED\]"/, fn ->
-        email |> SparkPostAdapter.deliver(@config)
-      end
+      assert {:error, error} = email |> SparkPostAdapter.deliver(@config)
+      assert error.message =~ ~r/"key" => "\[FILTERED\]"/
     end
   end
 
