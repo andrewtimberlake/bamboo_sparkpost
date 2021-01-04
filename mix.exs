@@ -33,7 +33,7 @@ defmodule Bamboo.SparkPostAdapter.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :bamboo]]
+    [extra_applications: [:logger, :bamboo]]
   end
 
   defp package do

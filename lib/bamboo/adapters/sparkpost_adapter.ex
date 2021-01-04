@@ -198,6 +198,6 @@ defmodule Bamboo.SparkPostAdapter do
   if :erlang.function_exported(Bamboo, :json_library, 0) do
     def json_library, do: Bamboo.json_library()
   else
-    def json_library, do: Poison
+    def json_library, do: Jason
   end
 end
