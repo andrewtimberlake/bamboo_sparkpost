@@ -8,7 +8,7 @@ defmodule Bamboo.SparkPostAdapter.Mixfile do
     [
       app: :bamboo_sparkpost,
       version: @version,
-      elixir: "~> 1.3",
+      elixir: "~> 1.6",
       source_url: @project_url,
       homepage_url: @project_url,
       name: "Bamboo SparkPost Adapter",
