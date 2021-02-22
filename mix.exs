@@ -2,7 +2,7 @@ defmodule Bamboo.SparkPostAdapter.Mixfile do
   use Mix.Project
 
   @project_url "https://github.com/andrewtimberlake/bamboo_sparkpost"
-  @version "1.1.3"
+  @version "2.0.0"
 
   def project do
     [

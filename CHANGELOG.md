@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2.0.0
+
+### Breaking changes
+
+- Upgraded to support Bamboo 2.0 (See https://hexdocs.pm/bamboo/upgrade_to_2_0.html)
+
 ## 1.1.0
 
 - Add ability to set request headers in config to allow for working with a sub-account
