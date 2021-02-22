@@ -8,7 +8,7 @@ defmodule Bamboo.SparkPostAdapter.Mixfile do
     [
       app: :bamboo_sparkpost,
       version: @version,
-      elixir: "~> 1.3",
+      elixir: "~> 1.6",
       source_url: @project_url,
       homepage_url: @project_url,
       name: "Bamboo SparkPost Adapter",
@@ -55,7 +55,7 @@ defmodule Bamboo.SparkPostAdapter.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:bamboo, "~> 1.0"},
+      {:bamboo, "~> 2.0"},
       {:ex_doc, "~> 0.9", only: :dev},
       {:jason, ">= 0.0.0", only: [:test, :dev]},
       {:earmark, ">= 0.0.0", only: :dev},
