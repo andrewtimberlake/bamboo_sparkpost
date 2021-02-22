@@ -1,4 +1,5 @@
 # Bamboo.SparkPostAdapter
+
 [![Build Status](https://travis-ci.org/andrewtimberlake/bamboo_sparkpost.svg?branch=master)](https://travis-ci.org/andrewtimberlake/bamboo_sparkpost)
 
 An Adapter for the [Bamboo](https://github.com/thoughtbot/bamboo) email app.
@@ -7,7 +8,7 @@ An Adapter for the [Bamboo](https://github.com/thoughtbot/bamboo) email app.
 
 The package can be installed as:
 
-  1. Add bamboo_sparkpost to your list of dependencies in `mix.exs`:
+1. Add bamboo_sparkpost to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
@@ -15,7 +16,7 @@ def deps do
 end
 ```
 
-  2. Ensure bamboo is started before your application:
+2. Ensure bamboo is started before your application:
 
 ```elixir
 def application do
@@ -23,7 +24,7 @@ def application do
 end
 ```
 
-  3. Add your SparkPost API key to your config
+3. Add your SparkPost API key to your config
 
 ```elixir
 # In your config/config.exs file
@@ -40,9 +41,9 @@ config :bamboo,
   sparkpost_base_uri: "https://api.eu.sparkpost.com"
 ```
 
-  4. Follow Bamboo [Getting Started Guide](https://github.com/thoughtbot/bamboo#getting-started)
+4. Follow Bamboo [Getting Started Guide](https://github.com/thoughtbot/bamboo#getting-started)
 
-  5. Optionally add `hackney_options` or `request_headers`
+5. Optionally add `hackney_options` or `request_headers`
 
 ```elixir
 # In your config/config.exs file
@@ -55,7 +56,6 @@ config :my_app, MyApp.Mailer,
   ],
   request_headers: [{"X-MSYS-SUBACCOUNT", "123"}]
 ```
-
 
 ## Advanced Usage
 
